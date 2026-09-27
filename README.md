@@ -1,4 +1,7 @@
-# Bible MCP Server
+> [!note]
+> This is a fork I made and published to PyPI cause I felt like it. Basically equal to [geosp/mcp-bible](https://github.com/geosp/mcp-bible), go read the documentation there.
+
+# BibleGateway MCP Server
 
 A Model Context Protocol (MCP) server that provides Bible passage retrieval functionality using the `mcp-weather` core infrastructure.
 
@@ -10,7 +13,7 @@ This server enables AI assistants to access Bible passages from various translat
 
 ## Features
 
-The Bible MCP Server provides:
+The BibleGateway MCP Server provides:
 
 ### MCP Tools (for AI assistants)
 - `get_passage(passage, version)` - Retrieve Bible passages. Supports multiple passages separated by semicolons (e.g., "John 3:16; Romans 8:28").
@@ -22,7 +25,8 @@ The Bible MCP Server provides:
 - `GET /docs` - OpenAPI documentation (Swagger UI)
 
 ### Supported Bible Versions
-- ESV (English Standard Version)
+Supports all translations available on BibleGateway.com (200+ versions across 70+ languages). Common examples include:
+- ESV (English Standard Version) - Default
 - NIV (New International Version)
 - KJV (King James Version)
 - NASB (New American Standard Bible)
@@ -30,64 +34,33 @@ The Bible MCP Server provides:
 - NLT (New Living Translation)
 - AMP (Amplified Bible)
 - MSG (The Message)
+- CSB (Christian Standard Bible)
+- NRSVUE (New Revised Standard Version Updated Edition)
+- Any other valid BibleGateway code (e.g. `LUT` for German Luther, `LSG` for French Louis Segond, etc.)
 
 ## Installation
 
 ### Prerequisites
-- Python 3.10+
-- `uv` package manager
+- [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
 
-#### Installing uv
-
-**On Linux/macOS:**
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-**On Windows:**
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-Alternatively, you can install uv using pip:
-```bash
-pip install uv
-```
-
-After installation, restart your terminal or run `source ~/.bashrc` (Linux/macOS) or restart your command prompt (Windows).
-
-### Step 1: Install Dependencies
+### Install
 
 ```bash
-# From this directory
-cd mcp-bible
-
-# Install dependencies
-uv sync
-```
-
-### Step 2: Configure Environment
-
-```bash
-# Copy example configuration
-cp .env.example .env
-
-# Edit .env with your settings
-vi .env
+uv tool install biblegateway-mcp
 ```
 
 ## Usage
 
-The Bible MCP server supports three deployment modes via command-line arguments:
+The BibleGateway MCP server supports three deployment modes via command-line arguments:
 
 ### Mode 1: stdio (Default) - Direct AI Assistant Integration
 
 ```bash
 # Default mode - MCP over stdin/stdout
-uv run mcp-bible
+bg-mcp
 
 # Explicitly specify stdio mode  
-uv run mcp-bible --mode stdio
+bg-mcp --mode stdio
 ```
 
 Perfect for direct integration with AI assistants like GitHub Copilot, Claude Desktop, etc.
@@ -96,7 +69,7 @@ Perfect for direct integration with AI assistants like GitHub Copilot, Claude De
 
 ```bash
 # MCP-only server on HTTP (no REST API)
-uv run mcp-bible --mode mcp --port 3000 --no-auth
+bg-mcp --mode mcp --port 3000 --no-auth
 ```
 
 Provides MCP protocol over HTTP at `http://localhost:3000/mcp` for networked AI assistant access.
@@ -105,7 +78,7 @@ Provides MCP protocol over HTTP at `http://localhost:3000/mcp` for networked AI 
 
 ```bash
 # Full server with both REST API and MCP protocol
-uv run mcp-bible --mode rest --port 3000 --no-auth
+bg-mcp --mode rest --port 3000 --no-auth
 ```
 
 The server will start at `http://localhost:3000` with:
@@ -173,14 +146,14 @@ curl -X POST "http://localhost:3000/passage" \
 
 ```bash
 # See all available options
-uv run mcp-bible --help
+bg-mcp --help
 
 # Usage examples:
-uv run mcp-bible                         # stdio mode (default)
-uv run mcp-bible --mode stdio            # stdio mode
-uv run mcp-bible --mode mcp --port 4000  # MCP-only HTTP on port 4000
-uv run mcp-bible --mode rest --port 4000 # REST+MCP HTTP on port 4000
-uv run mcp-bible --mode rest --no-auth   # Disable authentication
+bg-mcp                         # stdio mode (default)
+bg-mcp --mode stdio            # stdio mode
+bg-mcp --mode mcp --port 4000  # MCP-only HTTP on port 4000
+bg-mcp --mode rest --port 4000 # REST+MCP HTTP on port 4000
+bg-mcp --mode rest --no-auth   # Disable authentication
 ```
 
 ### Environment Variables (Alternative to CLI)
@@ -196,266 +169,9 @@ export MCP_PORT=3000            # Port number
 export AUTH_ENABLED=false       # Enable/disable authentication
 
 # Then run without arguments
-uv run mcp-bible
+bg-mcp
 ```
 
-### Test All Modes
-
-Run the comprehensive test suite:
-
-```bash
-uv run tests/test_modes.py
-```
-
-Or try the interactive curl examples:
-
-```bash
-./examples/curl_examples.sh
-```
-
-## Project Structure
-
-```
-mcp_bible/
-├── __init__.py              # Package metadata
-├── config.py                # Configuration management (extends mcp-weather core)
-├── bible_service.py         # Business logic (Bible API client)
-├── service.py               # MCP service wrapper (with automatic feature discovery)
-├── server.py                # Server implementation (CLI mode support)
-├── features/                # Feature modules (MODULAR PATTERN)
-│   ├── __init__.py
-│   └── get_passage/         # Get passage feature
-│       ├── __init__.py
-│       ├── instructions.md  # 📝 Comprehensive documentation (core.utils)
-│       ├── models.py        # Feature-specific models
-│       ├── tool.py          # MCP tool definition (uses @inject_docstring)
-│       └── routes.py        # REST API endpoints (uses load_instruction)
-├── shared/                  # Shared models and utilities
-│   ├── __init__.py
-│   └── models.py            # Base models, error types
-├── tests/                   # Test suite
-│   └── test_modes.py        # Mode support testing
-└── examples/                # Usage examples
-    └── curl_examples.sh     # Interactive REST API examples
-```
-
-### Core.utils Integration
-
-This project uses the **core.utils pattern** from mcp-weather for dynamic documentation:
-
-- **`instructions.md`**: Comprehensive feature documentation in markdown
-- **`@inject_docstring`**: Dynamically injects markdown into MCP tool docstrings
-- **`load_instruction`**: Loads markdown for REST API documentation
-- **Single source of truth**: Same documentation for both MCP tools and REST endpoints
-
-## How It Works
-
-### Features Pattern (Automatic Discovery)
-
-This server uses **automatic feature discovery** - just like `mcp-weather`!
-
-**Add a new feature in 4 steps:**
-
-1. **Create feature directory**: `features/my_feature/`
-2. **Add instructions.md**: Comprehensive documentation in markdown
-3. **Add tool.py**: With `register_tool(mcp, service)` function using `@inject_docstring`
-4. **Add routes.py** (optional): With `create_router(service)` function using `load_instruction`
-
-**Example feature structure:**
-
-```python
-# features/my_feature/tool.py
-from core.utils import inject_docstring, load_instruction
-
-@mcp.tool()
-@inject_docstring(lambda: load_instruction("instructions.md", __file__))
-async def my_tool(param: str) -> dict:
-    """Documentation loaded from instructions.md"""
-    return {"result": param}
-
-# features/my_feature/routes.py  
-from core.utils import load_instruction
-
-@router.post("/endpoint", description=load_instruction("instructions.md", __file__))
-async def endpoint():
-    """Same documentation for REST API"""
-    return {"data": "value"}
-```
-
-**That's it!** The service automatically:
-- Discovers your feature
-- Registers MCP tools from `tool.py` 
-- Includes REST routes from `routes.py`
-- Loads documentation from `instructions.md`
-
-No manual registration needed!
-
-### 1. Configuration Layer (config.py)
-
-Extends core configuration classes with service-specific settings:
-
-```python
-from core.config import BaseServerConfig
-
-class BibleAPIConfig(BaseModel):
-    base_url: str
-    supported_versions: List[str]
-
-class AppConfig(BaseModel):
-    server: ServerConfig
-    bible_api: BibleAPIConfig
-```
-
-### 2. Business Logic Layer (bible_service.py)
-
-Pure business logic, independent of MCP/REST:
-
-```python
-class BibleService:
-    async def fetch_passage(self, passage: str, version: str) -> dict:
-        # Bible passage retrieval logic here
-        ...
-```
-
-### 3. MCP Service Wrapper (service.py)
-
-Implements `BaseService` to expose business logic via MCP:
-
-```python
-from core.server import BaseService
-
-class BibleMCPService(BaseService):
-    def register_mcp_tools(self, mcp: FastMCP) -> None:
-        # Automatic feature discovery and registration
-```
-
-### 4. Server Implementation (server.py)
-
-Extends `BaseMCPServer` to create the complete server:
-
-```python
-from core.server import BaseMCPServer
-
-class BibleMCPServer(BaseMCPServer):
-    @property
-    def service_title(self) -> str:
-        return "Bible MCP Server"
-
-    def create_router(self) -> APIRouter:
-        # Add REST endpoints
-        ...
-```
-
-## Key Benefits of Using mcp-weather Core
-
-By using `mcp-weather` as a dependency, you get:
-
-✅ **No boilerplate** - Server infrastructure is ready to use  
-✅ **Multiple deployment modes** - stdio, MCP-only HTTP, REST+MCP HTTP via CLI  
-✅ **Dynamic documentation** - Markdown-based docs via core.utils  
-✅ **Dual interfaces** - MCP + REST API automatically  
-✅ **Configuration** - Environment variable management  
-✅ **Error handling** - Comprehensive exception handling  
-✅ **Type safety** - Full Pydantic models and type hints  
-✅ **Async support** - Async-first design throughout  
-✅ **Logging** - Structured logging built-in  
-✅ **CORS** - Configurable CORS support  
-✅ **Health checks** - Standard endpoints  
-✅ **Testing** - Comprehensive test suite included
-
-## Customization
-
-### Add New MCP Tools
-
-Edit `mcp_bible/service.py`:
-
-```python
-def register_mcp_tools(self, mcp: FastMCP) -> None:
-    @mcp.tool()
-    async def my_new_tool(param: str) -> dict:
-        """Tool description for AI"""
-        return {"result": "value"}
-```
-
-### Add New REST Endpoints
-
-Edit `mcp_bible/server.py`:
-
-```python
-def create_router(self) -> APIRouter:
-    router = APIRouter()
-
-    @router.get("/my-endpoint")
-    async def my_endpoint():
-        return {"data": "value"}
-
-    return router
-```
-
-### Add New Configuration
-
-Edit `mcp_bible/config.py`:
-
-```python
-class BibleAPIConfig(BaseModel):
-    my_new_field: str = Field(default="value")
-```
-
-## Troubleshooting
-
-### Import Errors
-
-Make sure you're importing from `core`, not `mcp_weather.core`:
-
-```python
-from core.server import BaseMCPServer  # ✅ Correct
-from mcp_weather.core.server import BaseMCPServer  # ❌ Wrong
-```
-
-### Module Not Found
-
-Make sure mcp-weather is installed:
-
-```bash
-uv pip list | grep mcp-weather
-```
-
-If not installed, install it:
-
-```bash
-uv sync  # Installs from pyproject.toml
-```
-
-## Features Implemented ✅
-
-✅ **Multiple deployment modes** (stdio, mcp, rest)  
-✅ **CLI interface** with comprehensive help  
-✅ **Dynamic documentation** using core.utils  
-✅ **Bible passage retrieval** from BibleGateway.com  
-✅ **8 Bible translations** supported  
-✅ **Multiple passage support** (semicolon-separated)  
-✅ **Comprehensive test suite** with mode testing  
-✅ **REST API examples** and curl scripts  
-✅ **Auto-discovery** of features  
-✅ **Structured logging** throughout  
-
-## Next Steps
-
-- Add authentication providers (Authentik integration)
-- Add more Bible API sources (Bible API, ESV API) 
-- Implement passage search and concordance
-- Add daily verses and reading plans
-- Add Redis caching for performance
-- Add metrics and monitoring
-- Add Docker deployment examples
-
-## Learn More
-
-- [Using mcp-weather as Dependency](https://github.com/geosp/mcp-weather/blob/master/docs/USING_AS_DEPENDENCY.md)
-- [Main mcp-weather README](https://github.com/geosp/mcp-weather/blob/master/README.md)
-- [FastMCP Documentation](https://github.com/jlowin/fastmcp)
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-
-## License
+## License for original code from geosp/mcp-bible
 
 This project is provided as-is for use and modification.

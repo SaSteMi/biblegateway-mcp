@@ -1,5 +1,5 @@
 """
-Bible MCP Server
+BibleGateway MCP Server
 
 This demonstrates how to create a complete MCP server by extending
 BaseMCPServer from the mcp-weather core infrastructure.
@@ -12,9 +12,9 @@ from typing import List, Optional, Any
 from fastapi import FastAPI, APIRouter, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from core.server import BaseMCPServer
-from core.auth_mcp import create_auth_provider
-from core.cache import RedisCacheClient
+from mcp_bible.core.server import BaseMCPServer
+from mcp_bible.core.auth_mcp import create_auth_provider
+from mcp_bible.core.cache import RedisCacheClient
 
 from mcp_bible.config import AppConfig, get_config
 from mcp_bible.bible_service import BibleService
@@ -34,15 +34,14 @@ class BibleMCPServer(BaseMCPServer):
     @property
     def service_title(self) -> str:
         """Title shown in API documentation"""
-        return "Bible MCP Server"
+        return "BibleGateway MCP Server"
 
     @property
     def service_description(self) -> str:
         """Description shown in API documentation"""
         return (
             "Provides Bible passage retrieval capabilities via Model Context Protocol (MCP). "
-            "Supports multiple Bible translations with automatic parsing and cleaning. "
-            "Built using mcp-weather core infrastructure."
+            "Supports multiple Bible translations with automatic parsing and cleaning."
         )
 
     @property
@@ -188,10 +187,10 @@ def main():
     - rest: Both REST API and MCP protocol over HTTP
     
     Usage:
-        mcp-bible                    # stdio mode (default)
-        mcp-bible --mode stdio       # stdio mode  
-        mcp-bible --mode mcp         # MCP-only over HTTP
-        mcp-bible --mode rest        # REST API + MCP over HTTP
+        bg-mcp                    # stdio mode (default)
+        bg-mcp --mode stdio       # stdio mode  
+        bg-mcp --mode mcp         # MCP-only over HTTP
+        bg-mcp --mode rest        # REST API + MCP over HTTP
     """
     import argparse
     import os
@@ -199,14 +198,14 @@ def main():
     try:
         # Create CLI parser with mode support
         parser = argparse.ArgumentParser(
-            description="Bible MCP Server",
+            description="BibleGateway MCP Server",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="""
 Examples:
-  mcp-bible                         # Run with stdio transport (default)
-  mcp-bible --mode stdio            # Run with stdio transport
-  mcp-bible --mode mcp --port 3000  # Run MCP-only server on port 3000
-  mcp-bible --mode rest --port 3000 # Run REST API + MCP server on port 3000
+  bg-mcp                         # Run with stdio transport (default)
+  bg-mcp --mode stdio            # Run with stdio transport
+  bg-mcp --mode mcp --port 3000  # Run MCP-only server on port 3000
+  bg-mcp --mode rest --port 3000 # Run REST API + MCP server on port 3000
   
 Environment Variables:
   MCP_TRANSPORT          Transport mode: stdio or http

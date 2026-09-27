@@ -110,7 +110,11 @@ class BibleService:
                         "passage": passage,
                         "version": version,
                         "text": None,
-                        "error": "Could not parse passage text",
+                        "error": (
+                            f"Could not parse passage text for '{passage}' with version '{version}'. "
+                            f"Please verify the passage reference exists and '{version}' is a valid BibleGateway version code "
+                            f"(e.g., LUTH1545 for Luther 1545, HOF, SCH2000, LSG, ESV, NIV, etc.)."
+                        ),
                     }
 
                 logger.info(

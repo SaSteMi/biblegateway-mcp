@@ -22,8 +22,8 @@ This tool retrieves Bible passages from BibleGateway.com, supporting multiple Bi
 ### version (optional)
 - **Type**: string  
 - **Default**: "ESV"
-- **Description**: Bible translation version
-- **Supported versions**: ESV, NIV, KJV, NASB, NKJV, NLT, AMP, MSG
+- **Description**: Bible translation version. Accepts any valid BibleGateway translation symbol or code.
+- **Supported versions**: All BibleGateway translations (e.g. ESV, NIV, KJV, NASB, NKJV, NLT, AMP, MSG, CSB, NRSVUE, LUTH1545, HOF, LSG, RVR1960, etc.)
 
 ## Usage Examples
 
@@ -70,6 +70,7 @@ Returns a structured response containing:
 
 ## Supported Bible Versions
 
+Supports all translations on BibleGateway.com (200+ translations across 70+ languages). Common examples include:
 - **ESV** - English Standard Version (default)
 - **NIV** - New International Version
 - **KJV** - King James Version
@@ -78,6 +79,9 @@ Returns a structured response containing:
 - **NLT** - New Living Translation
 - **AMP** - Amplified Bible
 - **MSG** - The Message
+- **CSB** - Christian Standard Bible
+- **NRSVUE** - New Revised Standard Version Updated Edition
+- Any other valid BibleGateway translation code (e.g., `LUTH1545` for German Luther 1545, `HOF` for Hoffnung für Alle, `LSG` for French Louis Segond, `NAV` for Arabic, `NR2006` for Italian, `RVR1960` for Spanish, etc.)
 
 ## When to Use This Tool
 

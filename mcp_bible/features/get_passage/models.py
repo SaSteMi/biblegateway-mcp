@@ -11,7 +11,7 @@ class GetPassageRequest(BaseModel):
     passage: str = Field(description="Bible reference(s) (e.g., 'John 3:16', 'Romans 8', or 'John 3:16; Romans 8:28')", min_length=1)
     version: str = Field(
         default="ESV",
-        description="Bible translation version (e.g., 'ESV', 'NIV', 'KJV')"
+        description="Bible translation version (e.g., 'ESV', 'NIV', 'KJV', 'CSB', 'LUTH1545', or any valid BibleGateway version code)"
     )
 
 

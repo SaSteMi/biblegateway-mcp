@@ -9,7 +9,7 @@ import importlib
 import pkgutil
 from pathlib import Path
 
-from core.server import BaseService
+from mcp_bible.core.server import BaseService
 from fastmcp import FastMCP
 
 from mcp_bible.bible_service import BibleService

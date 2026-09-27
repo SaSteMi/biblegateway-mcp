@@ -5,7 +5,7 @@ REST API routes for get_passage feature
 import logging
 from fastapi import APIRouter, HTTPException
 
-from core.utils import load_instruction
+from mcp_bible.core.utils import load_instruction
 from mcp_bible.bible_service import BibleService
 from mcp_bible.features.get_passage.models import GetPassageRequest, GetPassageResponse
 from mcp_bible.shared.models import ErrorResponse

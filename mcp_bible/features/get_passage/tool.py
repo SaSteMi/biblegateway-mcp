@@ -8,7 +8,7 @@ import logging
 from typing import Dict, Any
 
 from fastmcp import FastMCP
-from core.utils import inject_docstring, load_instruction
+from mcp_bible.core.utils import inject_docstring, load_instruction
 
 from mcp_bible.bible_service import BibleService
 from mcp_bible.features.get_passage.models import GetPassageRequest, GetPassageResponse

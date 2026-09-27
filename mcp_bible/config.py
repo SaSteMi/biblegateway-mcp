@@ -8,7 +8,7 @@ import os
 from typing import Optional, List
 from pydantic import BaseModel, Field
 
-from core.config import (
+from mcp_bible.core.config import (
     AuthentikConfig,
     BaseServerConfig,
     RedisCacheConfig,
@@ -35,7 +35,7 @@ class BibleAPIConfig(BaseModel):
     )
     supported_versions: List[str] = Field(
         default=["ESV", "NIV", "KJV", "NASB", "NKJV", "NLT", "AMP", "MSG"],
-        description="List of supported Bible versions"
+        description="List of supported Bible versions (any valid BibleGateway version code is supported)"
     )
     timeout: float = Field(
         default=30.0,
