@@ -64,7 +64,7 @@ jobs:
       #
       # ALTERNATIVE: if your GitHub Release name is the PyPI project version string
       # ALTERNATIVE: exactly, uncomment the following line instead:
-      url: https://pypi.org/project/mcp-bible/${{ needs.release-build.outputs.version }}
+      url: https://pypi.org/project/biblegateway-mcp/${{ needs.release-build.outputs.version }}
 
     steps:
       - name: Retrieve release distributions
