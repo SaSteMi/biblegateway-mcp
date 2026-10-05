@@ -1,6 +1,6 @@
 [project]
 name = "biblegateway-mcp"
-version = "1.0.0"
+version = "1.0.1"
 description = "Unofficial bible passage retrieval MCP server using BibleGateway"
 requires-python = ">=3.10"
 readme = "README.md"
